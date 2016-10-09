@@ -1,16 +1,32 @@
-#!/bin/bash
+#!/bin/sh
+
+. /etc/os-release
 
 systemctl stop kodi
-modprobe snd_bcm2835
 
-fbset -g 1920 1080 1920 1080 32
+case "$LIBREELEC_ARCH" in
+  RPi*)
+    dtparam audio=on
+    fbset -g 1920 1080 1920 1080 32
+    ;;
+  *)
+esac
 
-bash ./input.sh &
+./input.sh &
 
-rm -rf /storage/.config/chromium-browser/SingletonLock
-docker run -it -p 1234:1234/udp --privileged -v /storage:/storage -v /var/run/dbus:/run/dbus chrome
+rm -fr /storage/.config/chromium-browser/SingletonLock
+docker run --privileged -it \
+           -p 1234:1234/udp \
+           -v /storage:/storage \
+           -v /var/run/dbus:/run/dbus chrome
 
-while ps axg | grep -vw grep | grep -w chromium-browser > /dev/null; do sleep 1; done
+pkill -P $$
 
-rmmod snd_bcm2835
+case "$LIBREELEC_ARCH" in
+  RPi*)
+    fbset -g 1 1 1 1 32
+    ;;
+  *)
+esac
+
 systemctl start kodi
