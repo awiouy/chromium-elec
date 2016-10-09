@@ -1,6 +1,9 @@
 FROM resin/rpi-raspbian:jessie-20160831
 
-RUN apt-get update \
+COPY files /
+
+RUN chmod u+x /chromium/input.sh /chromium/run.sh \
+ && apt-get update \
  && apt-get install -y \
             build-essential \
             cmake \
@@ -25,14 +28,11 @@ RUN apt-get update \
  && chmod 755 /usr/lib/chromium-browser/libwidevinecdm*.so \
  && cd / \
  && rm -fr /build \
- && apt-get remove --auto-remove \
+ && apt-get purge \
             build-essential \
             cmake \
             curl \
             git \
  && apt-get autoremove
 
-COPY 10-inputs.conf /etc/X11/xorg.conf.d/
-COPY input.sh run.sh /tmp/
-
-CMD /tmp/run.sh
+CMD /chromium/run.sh
