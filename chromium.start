@@ -12,7 +12,7 @@ case "$LIBREELEC_ARCH" in
   *)
 esac
 
-cec-client | nc -u 127.0.0.1 1234 &
+cec-client | nc -l -p 1234 -u &
 
 rm -fr /storage/.config/chromium-browser/SingletonLock
 docker run --privileged --rm -it \
