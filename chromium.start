@@ -15,7 +15,7 @@ esac
 cec-client | nc -u 127.0.0.1 1234 &
 
 rm -fr /storage/.config/chromium-browser/SingletonLock
-docker run --privileged -it \
+docker run --privileged --rm -it \
            -p 1234:1234/udp \
            -v /storage:/storage \
            -v /var/run/dbus:/run/dbus chrome
